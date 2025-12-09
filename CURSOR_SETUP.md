@@ -21,12 +21,12 @@ Add this configuration to your MCP settings file:
   "mcpServers": {
     "grafana-observer": {
       "command": "node",
-      "args": ["/Users/aagarwal/Documents/Projects/Chamberlain/Github/grafana-observer/dist/index.js"],
+      "args": ["/Users/user/Documents/Projects/your-path/grafana-observer/dist/index.js"],
       "env": {
-        "GRAFANA_URL": "https://grafana.preprod.tendplatform.com",
+        "GRAFANA_URL": "https://your-grafana-instance.com",
         "GRAFANA_EMAIL": "your-email@example.com",
         "GRAFANA_PASSWORD": "your-password",
-        "GRAFANA_DEFAULT_DATASOURCE_UID": "000000007",
+        "GRAFANA_DEFAULT_DATASOURCE_UID": "your-datasource-uid",
         "GRAFANA_ORG_ID": "1"
       }
     }
@@ -41,10 +41,10 @@ Add this configuration to your MCP settings file:
 
 ### Step 4: Find Your Prometheus Datasource UID
 
-1. Go to your Grafana instance: https://grafana.preprod.tendplatform.com
+1. Go to your Grafana instance: https://your-grafana-instance.com
 2. Navigate to **Configuration** → **Data Sources**
 3. Click on your Prometheus datasource
-4. Look at the URL - the UID is at the end (e.g., `/datasources/edit/000000007`)
+4. Look at the URL - the UID is at the end (e.g., `/datasources/edit/your-datasource-uid`)
 5. Update `GRAFANA_DEFAULT_DATASOURCE_UID` in the config
 
 ### Step 5: Restart Cursor
@@ -65,7 +65,7 @@ List all dashboards in Grafana
 
 #### Test Prometheus Queries
 ```
-Check the health of all hub-app instances
+Check the health of all my-app instances
 ```
 
 ```
@@ -73,7 +73,7 @@ Show me the current client connections
 ```
 
 ```
-What metrics are available for hub-app?
+What metrics are available for my-app?
 ```
 
 ## Available Tools
@@ -105,20 +105,20 @@ Once configured, you'll have access to 16 tools:
 ### Dashboard Inspection
 ```
 Show me the PRE-PROD-LOAD-TESTING-ALL-COMPONENTS dashboard
-What panels are in dashboard ScOkgQ9Nz?
-Extract all queries from dashboard ScOkgQ9Nz
+What panels are in dashboard abc123xyz?
+Extract all queries from dashboard abc123xyz
 ```
 
 ### Service Monitoring
 ```
-Are all hub-app instances up?
+Are all my-app instances up?
 How many instances are running?
-What's the status of instance 10.2.52.116:8123?
+What's the status of instance 10.0.0.X:8123?
 ```
 
 ### Metric Queries
 ```
-Get the current value of up{job="hub-app"}
+Get the current value of up{job="my-app"}
 Show me all metrics containing "hub"
 What are all the job names in Prometheus?
 Get client connections for the last hour
@@ -128,7 +128,7 @@ Get client connections for the last hour
 ```
 Calculate the login rate over the last 5 minutes
 Show me memory usage trends
-Get all instances for the hub-app job
+Get all instances for the my-app job
 ```
 
 ## Troubleshooting
@@ -147,11 +147,11 @@ Get all instances for the hub-app job
   "mcpServers": {
     "grafana-observer": {
       "command": "node",
-      "args": ["/Users/aagarwal/Documents/Projects/Chamberlain/Github/grafana-observer/dist/index.js"],
+      "args": ["/Users/user/Documents/Projects/your-path/grafana-observer/dist/index.js"],
       "env": {
-        "GRAFANA_URL": "https://grafana.preprod.tendplatform.com",
+        "GRAFANA_URL": "https://your-grafana-instance.com",
         "GRAFANA_TOKEN": "your-api-token-here",
-        "GRAFANA_DEFAULT_DATASOURCE_UID": "000000007"
+        "GRAFANA_DEFAULT_DATASOURCE_UID": "your-datasource-uid"
       }
     }
   }
@@ -176,13 +176,13 @@ If you get "Datasource UID required" errors:
 You can test the MCP server directly:
 
 ```bash
-cd /Users/aagarwal/Documents/Projects/Chamberlain/Github/grafana-observer
+cd /Users/user/Documents/Projects/your-path/grafana-observer
 
 # Set environment variables
-export GRAFANA_URL="https://grafana.preprod.tendplatform.com"
+export GRAFANA_URL="https://your-grafana-instance.com"
 export GRAFANA_EMAIL="your-email@example.com"
 export GRAFANA_PASSWORD="your-password"
-export GRAFANA_DEFAULT_DATASOURCE_UID="000000007"
+export GRAFANA_DEFAULT_DATASOURCE_UID="your-datasource-uid"
 
 # Run the server
 node dist/index.js
@@ -191,9 +191,9 @@ node dist/index.js
 You should see:
 ```
 Starting Grafana Observer MCP Server v0.3.0
-Connected to Grafana at https://grafana.preprod.tendplatform.com
+Connected to Grafana at https://your-grafana-instance.com
 Authentication method: basic
-Default datasource UID: 000000007
+Default datasource UID: your-datasource-uid
 ```
 
 Press Ctrl+C to stop.

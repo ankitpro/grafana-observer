@@ -4,7 +4,7 @@
 
 ### Get Complete Dashboard Information
 ```
-Show me the complete configuration for dashboard ScOkgQ9Nz
+Show me the complete configuration for dashboard abc123xyz
 ```
 
 ```
@@ -13,7 +13,7 @@ Get all panels from the pre-prod load testing dashboard
 
 ### Get Specific Panel Details
 ```
-What queries are configured in panel 5 of dashboard ScOkgQ9Nz?
+What queries are configured in panel 5 of dashboard abc123xyz?
 ```
 
 ```
@@ -48,7 +48,7 @@ Show me all dashboards in the monitoring folder
 
 ### Template Variables
 ```
-What variables are available in dashboard ScOkgQ9Nz?
+What variables are available in dashboard abc123xyz?
 ```
 
 ```

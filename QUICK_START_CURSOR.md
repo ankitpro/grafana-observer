@@ -39,13 +39,13 @@ Choose ONE of these options:
     "grafana-observer": {
       "command": "node",
       "args": [
-        "/Users/aagarwal/Documents/Projects/Chamberlain/Github/grafana-observer/dist/index.js"
+        "/absolute/path/to/grafana-observer/dist/index.js"
       ],
       "env": {
-        "GRAFANA_URL": "https://grafana.preprod.tendplatform.com",
+        "GRAFANA_URL": "https://your-grafana-instance.com",
         "GRAFANA_EMAIL": "your-email@example.com",
         "GRAFANA_PASSWORD": "your-password-here",
-        "GRAFANA_DEFAULT_DATASOURCE_UID": "000000007",
+        "GRAFANA_DEFAULT_DATASOURCE_UID": "your-datasource-uid",
         "GRAFANA_ORG_ID": "1"
       }
     }
@@ -84,17 +84,17 @@ You should see the MCP server respond with dashboard information or health statu
 ### Dashboard Queries
 ```
 Show me all dashboards
-Get dashboard ScOkgQ9Nz details
+Get dashboard abc123xyz details
 What panels are in the load testing dashboard?
-Extract all queries from dashboard ScOkgQ9Nz
+Extract all queries from dashboard abc123xyz
 ```
 
 ### Prometheus Monitoring
 ```
-Are all hub-app instances up?
+Are all my-app instances up?
 How many instances are running?
 Get current client connections
-Show me all metrics for hub-app
+Show me all metrics for my-app
 What's the login rate?
 ```
 
@@ -110,7 +110,7 @@ What jobs are configured in Prometheus?
 
 If you need to find your Prometheus datasource UID:
 
-1. Go to https://grafana.preprod.tendplatform.com
+1. Go to https://your-grafana-instance.com
 2. Click **Configuration** (gear icon) → **Data Sources**
 3. Click on your **Prometheus** datasource
 4. Look at the URL: `https://grafana.../datasources/edit/YOUR_UID_HERE`
@@ -138,11 +138,11 @@ If you see authentication errors:
   "mcpServers": {
     "grafana-observer": {
       "command": "node",
-      "args": ["/Users/aagarwal/Documents/Projects/Chamberlain/Github/grafana-observer/dist/index.js"],
+      "args": ["/absolute/path/to/grafana-observer/dist/index.js"],
       "env": {
-        "GRAFANA_URL": "https://grafana.preprod.tendplatform.com",
+        "GRAFANA_URL": "https://your-grafana-instance.com",
         "GRAFANA_TOKEN": "your-api-token",
-        "GRAFANA_DEFAULT_DATASOURCE_UID": "000000007"
+        "GRAFANA_DEFAULT_DATASOURCE_UID": "your-datasource-uid"
       }
     }
   }
@@ -167,7 +167,7 @@ This means `GRAFANA_DEFAULT_DATASOURCE_UID` is not set or incorrect:
 
 ### Connection Refused
 
-- Verify you can access https://grafana.preprod.tendplatform.com in your browser
+- Verify you can access https://your-grafana-instance.com in your browser
 - Check if you're on VPN (if required)
 - Verify the URL is correct
 
@@ -176,12 +176,12 @@ This means `GRAFANA_DEFAULT_DATASOURCE_UID` is not set or incorrect:
 You can test the MCP server directly in terminal:
 
 ```bash
-cd /Users/aagarwal/Documents/Projects/Chamberlain/Github/grafana-observer
+cd /absolute/path/to/grafana-observer
 
-export GRAFANA_URL="https://grafana.preprod.tendplatform.com"
+export GRAFANA_URL="https://your-grafana-instance.com"
 export GRAFANA_EMAIL="your-email@example.com"
 export GRAFANA_PASSWORD="your-password"
-export GRAFANA_DEFAULT_DATASOURCE_UID="000000007"
+export GRAFANA_DEFAULT_DATASOURCE_UID="your-datasource-uid"
 
 node dist/index.js
 ```
@@ -189,9 +189,9 @@ node dist/index.js
 Expected output:
 ```
 Starting Grafana Observer MCP Server v0.3.0
-Connected to Grafana at https://grafana.preprod.tendplatform.com
+Connected to Grafana at https://your-grafana-instance.com
 Authentication method: basic
-Default datasource UID: 000000007
+Default datasource UID: your-datasource-uid
 ```
 
 Press `Ctrl+C` to stop.

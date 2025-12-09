@@ -60,7 +60,7 @@ export GRAFANA_ORG_ID="1"  # Default organization ID
 export GRAFANA_VERIFY_SSL="true"  # Set to false for self-signed certificates
 
 # For Prometheus queries (optional but recommended)
-export GRAFANA_DEFAULT_DATASOURCE_UID="000000007"  # Your Prometheus datasource UID
+export GRAFANA_DEFAULT_DATASOURCE_UID="your-datasource-uid"  # Your Prometheus datasource UID
 ```
 
 ### Authentication Methods
@@ -100,7 +100,7 @@ Then configure:
       "env": {
         "GRAFANA_URL": "https://your-grafana-instance.com",
         "GRAFANA_TOKEN": "your-api-token",
-        "GRAFANA_DEFAULT_DATASOURCE_UID": "000000007"
+        "GRAFANA_DEFAULT_DATASOURCE_UID": "your-datasource-uid"
       }
     }
   }
@@ -118,7 +118,7 @@ Then configure:
       "env": {
         "GRAFANA_URL": "https://your-grafana-instance.com",
         "GRAFANA_TOKEN": "your-api-token",
-        "GRAFANA_DEFAULT_DATASOURCE_UID": "000000007"
+        "GRAFANA_DEFAULT_DATASOURCE_UID": "your-datasource-uid"
       }
     }
   }
@@ -137,7 +137,7 @@ Then configure:
         "GRAFANA_URL": "https://your-grafana-instance.com",
         "GRAFANA_EMAIL": "your-email@example.com",
         "GRAFANA_PASSWORD": "your-password",
-        "GRAFANA_DEFAULT_DATASOURCE_UID": "000000007"
+        "GRAFANA_DEFAULT_DATASOURCE_UID": "your-datasource-uid"
       }
     }
   }

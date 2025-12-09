@@ -3,13 +3,13 @@
     "grafana-observer": {
       "command": "node",
       "args": [
-        "/Users/aagarwal/Documents/Projects/Chamberlain/Github/grafana-observer/dist/index.js"
+        "/absolute/path/to/grafana-observer/dist/index.js"
       ],
       "env": {
-        "GRAFANA_URL": "https://grafana.preprod.tendplatform.com",
+        "GRAFANA_URL": "https://your-grafana-instance.com",
         "GRAFANA_EMAIL": "your-email@example.com",
         "GRAFANA_PASSWORD": "your-password",
-        "GRAFANA_DEFAULT_DATASOURCE_UID": "000000007",
+        "GRAFANA_DEFAULT_DATASOURCE_UID": "your-datasource-uid",
         "GRAFANA_ORG_ID": "1"
       }
     }

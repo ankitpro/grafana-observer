@@ -34,7 +34,7 @@ cp .env.example .env
 Edit `.env` and add your Grafana credentials:
 
 ```env
-GRAFANA_URL=https://grafana.preprod.tendplatform.com
+GRAFANA_URL=https://your-grafana-instance.com
 GRAFANA_TOKEN=your-api-token-here
 GRAFANA_ORG_ID=1
 GRAFANA_VERIFY_SSL=true
@@ -59,14 +59,14 @@ You should see:
 ```
 Testing Grafana connection...
 --------------------------------------------------
-✓ Connected to: https://grafana.preprod.tendplatform.com
+✓ Connected to: https://your-grafana-instance.com
 ✓ Organization ID: 1
 
 Testing API access...
 ✓ Found 5 dashboards (showing max 5)
 
 Sample dashboards:
-  - Pre-Prod Load Testing All Components (UID: ScOkgQ9Nz)
+  - Pre-Prod Load Testing All Components (UID: abc123xyz)
   - ...
 
 ✓ Found 3 folders
@@ -90,7 +90,7 @@ Add to your MCP client configuration (e.g., Claude Desktop, Cursor):
       "command": "python",
       "args": ["/absolute/path/to/grafana-observer/src/grafana_observer/server.py"],
       "env": {
-        "GRAFANA_URL": "https://grafana.preprod.tendplatform.com",
+        "GRAFANA_URL": "https://your-grafana-instance.com",
         "GRAFANA_TOKEN": "your-api-token"
       }
     }
@@ -107,7 +107,7 @@ Add to your MCP client configuration (e.g., Claude Desktop, Cursor):
       "command": "python",
       "args": ["C:\\path\\to\\grafana-observer\\src\\grafana_observer\\server.py"],
       "env": {
-        "GRAFANA_URL": "https://grafana.preprod.tendplatform.com",
+        "GRAFANA_URL": "https://your-grafana-instance.com",
         "GRAFANA_TOKEN": "your-api-token"
       }
     }
@@ -124,13 +124,13 @@ Restart your MCP client (e.g., Claude Desktop) and try these queries:
 ### Example 1: Get Dashboard Information
 
 ```
-Show me the configuration for dashboard ScOkgQ9Nz
+Show me the configuration for dashboard abc123xyz
 ```
 
 ### Example 2: Inspect a Panel
 
 ```
-What queries are configured in panel 2 of dashboard ScOkgQ9Nz?
+What queries are configured in panel 2 of dashboard abc123xyz?
 ```
 
 ### Example 3: Search Dashboards
@@ -142,7 +142,7 @@ List all dashboards in my Grafana instance
 ### Example 4: Get Dashboard Variables
 
 ```
-Show me all variables in dashboard ScOkgQ9Nz
+Show me all variables in dashboard abc123xyz
 ```
 
 ## Common Issues
@@ -167,7 +167,7 @@ Show me all variables in dashboard ScOkgQ9Nz
 - **Problem:** `Dashboard not found` error
 - **Solution:** Check the dashboard UID in the URL. It's the alphanumeric string after `/d/` in the dashboard URL:
   ```
-  https://grafana.example.com/d/ScOkgQ9Nz/dashboard-name
+  https://grafana.example.com/d/abc123xyz/dashboard-name
                                   ^^^^^^^^^
                                   This is the UID
   ```
@@ -195,7 +195,7 @@ If you want to use a virtual environment in your MCP configuration:
       "command": "/absolute/path/to/grafana-observer/venv/bin/python",
       "args": ["/absolute/path/to/grafana-observer/src/grafana_observer/server.py"],
       "env": {
-        "GRAFANA_URL": "https://grafana.preprod.tendplatform.com",
+        "GRAFANA_URL": "https://your-grafana-instance.com",
         "GRAFANA_TOKEN": "your-api-token"
       }
     }

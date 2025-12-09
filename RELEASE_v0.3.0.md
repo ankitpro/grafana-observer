@@ -11,7 +11,7 @@ Version 0.3.0 adds comprehensive Prometheus querying capabilities to the Grafana
 #### 1. **Instant Queries** (`grafana_query_metric`)
 Execute PromQL queries to get current metric values:
 ```promql
-up{job="hub-app"}
+up{job="my-app"}
 sum(metric_name{label="value"})
 rate(counter_metric[5m])
 ```
@@ -83,7 +83,7 @@ Extract all queries from dashboard panels:
 ### New Environment Variable
 
 ```bash
-GRAFANA_DEFAULT_DATASOURCE_UID="000000007"
+GRAFANA_DEFAULT_DATASOURCE_UID="your-datasource-uid"
 ```
 
 Set this to your Prometheus datasource UID for seamless querying. Find it in:
@@ -100,7 +100,7 @@ Set this to your Prometheus datasource UID for seamless querying. Find it in:
       "env": {
         "GRAFANA_URL": "https://grafana.example.com",
         "GRAFANA_TOKEN": "your-api-token",
-        "GRAFANA_DEFAULT_DATASOURCE_UID": "000000007"
+        "GRAFANA_DEFAULT_DATASOURCE_UID": "your-datasource-uid"
       }
     }
   }
@@ -111,9 +111,9 @@ Set this to your Prometheus datasource UID for seamless querying. Find it in:
 
 ### 1. Service Health Monitoring
 ```
-"Are all hub-app instances healthy?"
+"Are all my-app instances healthy?"
 "How many instances are down?"
-"What's the status of instance 10.2.52.116?"
+"What's the status of instance 10.0.0.X?"
 ```
 
 ### 2. Metric Analysis
@@ -126,7 +126,7 @@ Set this to your Prometheus datasource UID for seamless querying. Find it in:
 ### 3. Troubleshooting
 ```
 "Extract all queries from the load testing dashboard"
-"What metrics are available for hub-app?"
+"What metrics are available for my-app?"
 "Show me all instances running the broker service"
 ```
 
@@ -140,7 +140,7 @@ Set this to your Prometheus datasource UID for seamless querying. Find it in:
 ## 🎯 Real-World Examples
 
 ### Check Service Status
-**Query:** "Check if all hub-app instances are healthy"
+**Query:** "Check if all my-app instances are healthy"
 
 **Result:**
 ```json
@@ -149,8 +149,8 @@ Set this to your Prometheus datasource UID for seamless querying. Find it in:
   "up": 8,
   "down": 4,
   "services": [
-    {"instance": "10.2.52.116:8123", "status": "UP", "job": "hub-app"},
-    {"instance": "10.2.52.117:8123", "status": "DOWN", "job": "hub-app"},
+    {"instance": "10.0.0.X:8123", "status": "UP", "job": "my-app"},
+    {"instance": "10.0.0.X:8123", "status": "DOWN", "job": "my-app"},
     ...
   ]
 }
@@ -242,10 +242,10 @@ If you don't set `GRAFANA_DEFAULT_DATASOURCE_UID`, you can still:
 ### Common Patterns
 ```promql
 # Service status
-up{job="hub-app"}
+up{job="my-app"}
 
 # Count instances
-count(up{job="hub-app"} == 1)
+count(up{job="my-app"} == 1)
 
 # Aggregate metrics
 sum(metric_name{label="value"})
