@@ -9,7 +9,17 @@
 
 ## 📝 Step-by-Step Configuration
 
-### Step 1: Open Cursor MCP Settings
+### Step 1: Install grafana-observer-mcp
+
+**Option A: Global Install (Recommended)**
+```bash
+npm install -g grafana-observer-mcp
+```
+
+**Option B: Use npx (No install needed)**
+Skip installation, configure with `npx` command below.
+
+### Step 2: Open Cursor MCP Settings
 
 1. Open **Cursor**
 2. Press `Cmd + ,` (or go to Cursor → Settings)
@@ -17,11 +27,11 @@
 4. Click **Model Context Protocol**
 5. Click **Edit Config** button
 
-This will open your MCP configuration file (usually at `~/Library/Application Support/Cursor/User/globalStorage/mcp-config.json`)
+This will open your MCP configuration file (usually at `~/.cursor/mcp.json`)
 
-### Step 2: Add Grafana Observer Configuration
+### Step 3: Add Grafana Observer Configuration
 
-Copy this configuration and add it to your MCP config file:
+Choose ONE of these options:
 
 ```json
 {

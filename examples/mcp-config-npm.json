@@ -1,8 +1,7 @@
 {
   "mcpServers": {
     "grafana-observer": {
-      "command": "npx",
-      "args": ["-y", "grafana-observer-mcp"],
+      "command": "grafana-observer",
       "env": {
         "GRAFANA_URL": "https://grafana.preprod.tendplatform.com",
         "GRAFANA_EMAIL": "your-email@example.com",

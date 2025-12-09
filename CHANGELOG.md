@@ -5,6 +5,24 @@ All notable changes to this project will be documented in this file.
 The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/),
 and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
+## [0.3.1] - 2024-12-09
+
+### Fixed
+- **Documentation**: Updated all configuration examples to show three installation options
+  - Option 1: Global npm install with `grafana-observer` command
+  - Option 2: npx usage with `npx -y grafana-observer-mcp`
+  - Option 3: Local development build with `node` and full path
+- **Examples**: Added separate config files for each installation method
+  - `mcp-config-npm.json` - For npm global install
+  - `mcp-config-npx.json` - For npx usage
+  - `mcp-config-local.json` - For local development
+- Clarified that `grafana-observer` command requires global npm install
+
+### Changed
+- Updated README.md with all three installation methods
+- Updated QUICK_START_CURSOR.md with clearer instructions
+- Changed default example to use npx (no install required)
+
 ## [0.3.0] - 2024-12-09
 
 ### Added

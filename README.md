@@ -82,8 +82,16 @@ Use your Grafana login credentials:
 
 ## Usage with MCP
 
-Add to your MCP settings configuration (e.g., Claude Desktop):
+Add to your MCP settings configuration (e.g., Claude Desktop, Cursor):
 
+**Option 1: Using npm global install (Recommended)**
+
+First install globally:
+```bash
+npm install -g grafana-observer-mcp
+```
+
+Then configure:
 ```json
 {
   "mcpServers": {
@@ -99,13 +107,32 @@ Add to your MCP settings configuration (e.g., Claude Desktop):
 }
 ```
 
-Or with email/password:
+**Option 2: Using npx (No install needed)**
 
 ```json
 {
   "mcpServers": {
     "grafana-observer": {
-      "command": "grafana-observer",
+      "command": "npx",
+      "args": ["-y", "grafana-observer-mcp"],
+      "env": {
+        "GRAFANA_URL": "https://your-grafana-instance.com",
+        "GRAFANA_TOKEN": "your-api-token",
+        "GRAFANA_DEFAULT_DATASOURCE_UID": "000000007"
+      }
+    }
+  }
+}
+```
+
+**Option 3: Using local development build**
+
+```json
+{
+  "mcpServers": {
+    "grafana-observer": {
+      "command": "node",
+      "args": ["/absolute/path/to/grafana-observer/dist/index.js"],
       "env": {
         "GRAFANA_URL": "https://your-grafana-instance.com",
         "GRAFANA_EMAIL": "your-email@example.com",
