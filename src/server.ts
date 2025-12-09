@@ -253,7 +253,7 @@ server.setRequestHandler(ListToolsRequestSchema, async () => {
             query: {
               type: 'string',
               description:
-                'PromQL query expression (e.g., "up{job=\\"hub-app\\"}", "sum(metric_name)")',
+                'PromQL query expression (e.g., "up{job=\\"my-app\\"}", "sum(metric_name)")',
             },
             datasource_uid: {
               type: 'string',

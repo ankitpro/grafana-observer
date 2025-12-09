@@ -5,6 +5,23 @@ All notable changes to this project will be documented in this file.
 The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/),
 and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
+## [0.3.2] - 2024-12-09
+
+### Security
+- **Complete Sanitization**: Removed ALL company-specific information from repository
+  - Removed company URLs and internal IP addresses
+  - Removed real dashboard UIDs and datasource UIDs
+  - Removed company-specific app names (hub-app, broker-app, servlet-app, distributor-app)
+  - Removed company-specific metric names (tend_*, hub_*, broker_*)
+  - Replaced with generic examples (my-app, service-b, app_client_connections, etc.)
+- **Deleted Sensitive Files**: Removed files containing test data and deployment information
+- **Updated Examples**: All examples now use generic placeholders
+
+### Changed
+- All documentation uses generic app names and metrics
+- All example queries use placeholder values
+- Source code examples sanitized
+
 ## [0.3.1] - 2024-12-09
 
 ### Fixed

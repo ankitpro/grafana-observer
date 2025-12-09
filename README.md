@@ -211,12 +211,12 @@ Check Grafana instance health and version information.
 Execute a Prometheus instant query to get current metric values.
 
 **Parameters:**
-- `query` (required): PromQL expression (e.g., `up{job="hub-app"}`)
+- `query` (required): PromQL expression (e.g., `up{job="my-app"}`)
 - `datasource_uid` (optional): Datasource UID (uses default if not provided)
 - `time` (optional): Evaluation timestamp in Unix seconds
 
 **Example queries:**
-- `up{job="hub-app"}` - Check service status
+- `up{job="my-app"}` - Check service status
 - `sum(metric_name)` - Aggregate metric values
 - `rate(counter_metric[5m])` - Calculate rate over 5 minutes
 
@@ -277,10 +277,10 @@ Extract all queries from dashboard panels.
 
 ### Prometheus Monitoring
 ```
-"Check if all hub-app instances are healthy"
+"Check if all my-app instances are healthy"
 "How many clients are connected right now?"
 "Show me the CPU usage trend for the last 3 hours"
-"What metrics are available for the hub-app service?"
+"What metrics are available for the my-app service?"
 "List all running instances"
 "Get the login rate over the last hour"
 ```
@@ -289,22 +289,22 @@ Extract all queries from dashboard panels.
 
 ### Check Service Health
 ```promql
-up{job="hub-app"}
+up{job="my-app"}
 ```
 
 ### Count Active Instances
 ```promql
-count(up{job="hub-app"} == 1)
+count(up{job="my-app"} == 1)
 ```
 
 ### Get Client Connections
 ```promql
-sum(tend_hub_app_endpoint_clients{channel="IM", type="Total"})
+sum(app_client_connections{channel="IM", type="Total"})
 ```
 
 ### Calculate Login Rate
 ```promql
-sum(rate(hub_loginAttempts_total[5m])) * 60
+sum(rate(login_attempts_total[5m])) * 60
 ```
 
 ### Memory Usage

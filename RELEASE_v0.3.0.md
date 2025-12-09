@@ -161,7 +161,7 @@ Set this to your Prometheus datasource UID for seamless querying. Find it in:
 
 **Uses:** `grafana_query_metric`
 ```promql
-sum(tend_hub_app_endpoint_clients{channel="IM", type="Total"})
+sum(app_client_connections{channel="IM", type="Total"})
 ```
 
 **Result:** 1858 total clients
