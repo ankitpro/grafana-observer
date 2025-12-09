@@ -1,18 +1,14 @@
 {
   "mcpServers": {
-    "grafana-observer-token": {
-      "command": "grafana-observer",
-      "env": {
-        "GRAFANA_URL": "https://grafana.preprod.tendplatform.com",
-        "GRAFANA_TOKEN": "your-api-token"
-      }
-    },
-    "grafana-observer-password": {
-      "command": "grafana-observer",
+    "grafana-observer": {
+      "command": "node",
+      "args": ["/Users/aagarwal/Documents/Projects/Chamberlain/Github/grafana-observer/dist/index.js"],
       "env": {
         "GRAFANA_URL": "https://grafana.preprod.tendplatform.com",
         "GRAFANA_EMAIL": "your-email@example.com",
-        "GRAFANA_PASSWORD": "your-password"
+        "GRAFANA_PASSWORD": "your-password",
+        "GRAFANA_DEFAULT_DATASOURCE_UID": "000000007",
+        "GRAFANA_ORG_ID": "1"
       }
     }
   }

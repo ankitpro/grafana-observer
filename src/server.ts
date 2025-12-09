@@ -17,7 +17,7 @@ dotenv.config();
 const server = new Server(
   {
     name: 'grafana-observer',
-    version: '0.2.0',
+    version: '0.3.0',
   },
   {
     capabilities: {
@@ -232,6 +232,153 @@ server.setRequestHandler(ListToolsRequestSchema, async () => {
             },
           },
           required: ['uid'],
+        },
+      },
+      {
+        name: 'grafana_health_check',
+        description:
+          'Check Grafana instance health and version information.',
+        inputSchema: {
+          type: 'object',
+          properties: {},
+        },
+      },
+      {
+        name: 'grafana_query_metric',
+        description:
+          'Execute a Prometheus instant query to get current metric values. Returns the latest value for the specified PromQL expression.',
+        inputSchema: {
+          type: 'object',
+          properties: {
+            query: {
+              type: 'string',
+              description:
+                'PromQL query expression (e.g., "up{job=\\"hub-app\\"}", "sum(metric_name)")',
+            },
+            datasource_uid: {
+              type: 'string',
+              description:
+                'Datasource UID (optional, uses GRAFANA_DEFAULT_DATASOURCE_UID if not provided)',
+            },
+            time: {
+              type: 'number',
+              description:
+                'Evaluation timestamp in Unix seconds (optional, defaults to now)',
+            },
+          },
+          required: ['query'],
+        },
+      },
+      {
+        name: 'grafana_query_range',
+        description:
+          'Execute a Prometheus range query to get time-series data over a period. Returns historical metric values with timestamps.',
+        inputSchema: {
+          type: 'object',
+          properties: {
+            query: {
+              type: 'string',
+              description: 'PromQL query expression',
+            },
+            start: {
+              type: 'number',
+              description: 'Start timestamp in Unix seconds',
+            },
+            end: {
+              type: 'number',
+              description: 'End timestamp in Unix seconds',
+            },
+            step: {
+              type: 'number',
+              description:
+                'Query resolution step in seconds (e.g., 300 for 5 minutes)',
+            },
+            datasource_uid: {
+              type: 'string',
+              description:
+                'Datasource UID (optional, uses default if not provided)',
+            },
+          },
+          required: ['query', 'start', 'end', 'step'],
+        },
+      },
+      {
+        name: 'grafana_list_metrics',
+        description:
+          'Get all available metric names from Prometheus. Useful for discovering what metrics are available to query.',
+        inputSchema: {
+          type: 'object',
+          properties: {
+            datasource_uid: {
+              type: 'string',
+              description:
+                'Datasource UID (optional, uses default if not provided)',
+            },
+            filter: {
+              type: 'string',
+              description:
+                'Filter pattern to match metric names (e.g., "hub", "login")',
+            },
+          },
+        },
+      },
+      {
+        name: 'grafana_get_label_values',
+        description:
+          'Get all values for a specific Prometheus label. Useful for discovering available jobs, instances, or other label values.',
+        inputSchema: {
+          type: 'object',
+          properties: {
+            label_name: {
+              type: 'string',
+              description:
+                'Label name to query (e.g., "job", "instance", "environment")',
+            },
+            datasource_uid: {
+              type: 'string',
+              description:
+                'Datasource UID (optional, uses default if not provided)',
+            },
+          },
+          required: ['label_name'],
+        },
+      },
+      {
+        name: 'grafana_get_service_status',
+        description:
+          'Check service availability using the "up" metric. Returns UP/DOWN status for each instance.',
+        inputSchema: {
+          type: 'object',
+          properties: {
+            job: {
+              type: 'string',
+              description: 'Filter by job name (optional)',
+            },
+            instance: {
+              type: 'string',
+              description: 'Filter by instance (optional)',
+            },
+            datasource_uid: {
+              type: 'string',
+              description:
+                'Datasource UID (optional, uses default if not provided)',
+            },
+          },
+        },
+      },
+      {
+        name: 'grafana_get_panel_queries',
+        description:
+          'Extract all queries from dashboard panels. Returns panel IDs, titles, types, and their associated queries.',
+        inputSchema: {
+          type: 'object',
+          properties: {
+            dashboard_uid: {
+              type: 'string',
+              description: 'Dashboard UID',
+            },
+          },
+          required: ['dashboard_uid'],
         },
       },
     ] as Tool[],
@@ -576,6 +723,213 @@ server.setRequestHandler(CallToolRequestSchema, async (request) => {
         };
       }
 
+      case 'grafana_health_check': {
+        const health = await client.healthCheck();
+
+        const response = {
+          status: 'ok',
+          version: health.version,
+          database: health.database,
+          commit: health.commit,
+        };
+
+        return {
+          content: [
+            {
+              type: 'text',
+              text: JSON.stringify(response, null, 2),
+            },
+          ],
+        };
+      }
+
+      case 'grafana_query_metric': {
+        const query = args.query as string;
+        const datasourceUid = args.datasource_uid as string | undefined;
+        const time = args.time as number | undefined;
+
+        const result = await client.prometheusQuery(
+          query,
+          datasourceUid,
+          time
+        );
+
+        const response = {
+          status: result.status,
+          resultType: result.data.resultType,
+          resultCount: result.data.result.length,
+          results: result.data.result,
+        };
+
+        return {
+          content: [
+            {
+              type: 'text',
+              text: JSON.stringify(response, null, 2),
+            },
+          ],
+        };
+      }
+
+      case 'grafana_query_range': {
+        const query = args.query as string;
+        const start = args.start as number;
+        const end = args.end as number;
+        const step = args.step as number;
+        const datasourceUid = args.datasource_uid as string | undefined;
+
+        const result = await client.prometheusQueryRange(
+          query,
+          start,
+          end,
+          step,
+          datasourceUid
+        );
+
+        // Calculate statistics for each series
+        const resultsWithStats = result.data.result.map((series: any) => {
+          const values = series.values.map((v: any) => parseFloat(v[1]));
+          const sum = values.reduce((a: number, b: number) => a + b, 0);
+          const avg = sum / values.length;
+          const max = Math.max(...values);
+          const min = Math.min(...values);
+
+          return {
+            metric: series.metric,
+            dataPoints: series.values.length,
+            statistics: {
+              avg: Math.round(avg * 100) / 100,
+              max,
+              min,
+              first: values[0],
+              last: values[values.length - 1],
+            },
+            values: series.values,
+          };
+        });
+
+        const response = {
+          status: result.status,
+          resultType: result.data.resultType,
+          seriesCount: result.data.result.length,
+          results: resultsWithStats,
+        };
+
+        return {
+          content: [
+            {
+              type: 'text',
+              text: JSON.stringify(response, null, 2),
+            },
+          ],
+        };
+      }
+
+      case 'grafana_list_metrics': {
+        const datasourceUid = args.datasource_uid as string | undefined;
+        const filter = args.filter as string | undefined;
+
+        let metrics = await client.getMetricNames(datasourceUid);
+
+        // Apply filter if provided
+        if (filter) {
+          const filterLower = filter.toLowerCase();
+          metrics = metrics.filter((m) => m.toLowerCase().includes(filterLower));
+        }
+
+        const response = {
+          total: metrics.length,
+          filter: filter || 'none',
+          metrics: metrics.slice(0, 100), // Limit to first 100 for display
+          truncated: metrics.length > 100,
+        };
+
+        return {
+          content: [
+            {
+              type: 'text',
+              text: JSON.stringify(response, null, 2),
+            },
+          ],
+        };
+      }
+
+      case 'grafana_get_label_values': {
+        const labelName = args.label_name as string;
+        const datasourceUid = args.datasource_uid as string | undefined;
+
+        const values = await client.getLabelValues(labelName, datasourceUid);
+
+        const response = {
+          label: labelName,
+          total: values.length,
+          values,
+        };
+
+        return {
+          content: [
+            {
+              type: 'text',
+              text: JSON.stringify(response, null, 2),
+            },
+          ],
+        };
+      }
+
+      case 'grafana_get_service_status': {
+        const job = args.job as string | undefined;
+        const instance = args.instance as string | undefined;
+        const datasourceUid = args.datasource_uid as string | undefined;
+
+        const statuses = await client.getServiceStatus(
+          job,
+          instance,
+          datasourceUid
+        );
+
+        const upCount = statuses.filter((s) => s.status === 'UP').length;
+        const downCount = statuses.filter((s) => s.status === 'DOWN').length;
+
+        const response = {
+          total: statuses.length,
+          up: upCount,
+          down: downCount,
+          services: statuses,
+        };
+
+        return {
+          content: [
+            {
+              type: 'text',
+              text: JSON.stringify(response, null, 2),
+            },
+          ],
+        };
+      }
+
+      case 'grafana_get_panel_queries': {
+        const dashboardUid = args.dashboard_uid as string;
+
+        const panelQueries = await client.getPanelQueries(dashboardUid);
+
+        const response = {
+          dashboard_uid: dashboardUid,
+          total_panels: panelQueries.length,
+          panels_with_queries: panelQueries.filter((p) => p.queries.length > 0)
+            .length,
+          panels: panelQueries,
+        };
+
+        return {
+          content: [
+            {
+              type: 'text',
+              text: JSON.stringify(response, null, 2),
+            },
+          ],
+        };
+      }
+
       default:
         return {
           content: [
@@ -610,12 +964,19 @@ server.setRequestHandler(CallToolRequestSchema, async (request) => {
 });
 
 async function main() {
-  console.error('Starting Grafana Observer MCP Server v0.2.0');
+  console.error('Starting Grafana Observer MCP Server v0.3.0');
 
   try {
     const client = getClient();
     console.error(`Connected to Grafana at ${client.getBaseUrl()}`);
     console.error(`Authentication method: ${client.getAuthMethod()}`);
+    
+    const defaultDs = client.getDefaultDatasourceUid();
+    if (defaultDs) {
+      console.error(`Default datasource UID: ${defaultDs}`);
+    } else {
+      console.error('No default datasource configured (Prometheus queries will require datasource_uid parameter)');
+    }
   } catch (error) {
     console.error(`Failed to initialize Grafana client: ${error}`);
     process.exit(1);

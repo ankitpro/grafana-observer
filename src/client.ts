@@ -10,6 +10,13 @@ import {
   Folder,
   DataSource,
   GrafanaConfig,
+  PrometheusQueryResult,
+  PrometheusLabelsResult,
+  PrometheusSeriesResult,
+  HealthCheckResult,
+  OrgInfo,
+  ServiceStatus,
+  PanelQuery,
 } from './types.js';
 
 export class GrafanaClient {
@@ -18,6 +25,7 @@ export class GrafanaClient {
   private email?: string;
   private password?: string;
   private orgId: string;
+  private defaultDatasourceUid?: string;
   private client: AxiosInstance;
 
   constructor(config?: Partial<GrafanaConfig>) {
@@ -33,6 +41,9 @@ export class GrafanaClient {
     this.password = config?.password || process.env.GRAFANA_PASSWORD;
     
     this.orgId = config?.orgId || process.env.GRAFANA_ORG_ID || '1';
+    this.defaultDatasourceUid = 
+      config?.defaultDatasourceUid || 
+      process.env.GRAFANA_DEFAULT_DATASOURCE_UID;
 
     const verifySSL =
       config?.verifySSL ??
@@ -220,6 +231,247 @@ export class GrafanaClient {
 
   getAuthMethod(): 'token' | 'basic' {
     return this.token ? 'token' : 'basic';
+  }
+
+  getDefaultDatasourceUid(): string | undefined {
+    return this.defaultDatasourceUid;
+  }
+
+  // ============ HEALTH & SYSTEM ENDPOINTS ============
+
+  async healthCheck(): Promise<HealthCheckResult> {
+    return this.request<HealthCheckResult>('GET', '/api/health');
+  }
+
+  async getOrgInfo(): Promise<OrgInfo> {
+    return this.request<OrgInfo>('GET', '/api/org');
+  }
+
+  // ============ PROMETHEUS QUERY ENDPOINTS ============
+
+  /**
+   * Execute Prometheus instant query (current value)
+   * @param query PromQL expression
+   * @param datasourceUid Datasource UID (optional, uses default if not provided)
+   * @param time Evaluation timestamp (optional, Unix timestamp)
+   */
+  async prometheusQuery(
+    query: string,
+    datasourceUid?: string,
+    time?: number
+  ): Promise<PrometheusQueryResult> {
+    const uid = datasourceUid || this.defaultDatasourceUid;
+    if (!uid) {
+      throw new Error(
+        'Datasource UID required. Set GRAFANA_DEFAULT_DATASOURCE_UID or provide datasourceUid parameter'
+      );
+    }
+
+    const params: Record<string, any> = { query };
+    if (time) {
+      params.time = time;
+    }
+
+    return this.request<PrometheusQueryResult>(
+      'GET',
+      `/api/datasources/proxy/uid/${uid}/api/v1/query`,
+      params
+    );
+  }
+
+  /**
+   * Execute Prometheus range query (time series data)
+   * @param query PromQL expression
+   * @param start Start timestamp (Unix seconds)
+   * @param end End timestamp (Unix seconds)
+   * @param step Query resolution step in seconds
+   * @param datasourceUid Datasource UID (optional)
+   */
+  async prometheusQueryRange(
+    query: string,
+    start: number,
+    end: number,
+    step: number,
+    datasourceUid?: string
+  ): Promise<PrometheusQueryResult> {
+    const uid = datasourceUid || this.defaultDatasourceUid;
+    if (!uid) {
+      throw new Error(
+        'Datasource UID required. Set GRAFANA_DEFAULT_DATASOURCE_UID or provide datasourceUid parameter'
+      );
+    }
+
+    const params = {
+      query,
+      start,
+      end,
+      step,
+    };
+
+    return this.request<PrometheusQueryResult>(
+      'GET',
+      `/api/datasources/proxy/uid/${uid}/api/v1/query_range`,
+      params
+    );
+  }
+
+  /**
+   * Get all available metric names from Prometheus
+   * @param datasourceUid Datasource UID (optional)
+   */
+  async getMetricNames(datasourceUid?: string): Promise<string[]> {
+    const uid = datasourceUid || this.defaultDatasourceUid;
+    if (!uid) {
+      throw new Error(
+        'Datasource UID required. Set GRAFANA_DEFAULT_DATASOURCE_UID or provide datasourceUid parameter'
+      );
+    }
+
+    const result = await this.request<PrometheusLabelsResult>(
+      'GET',
+      `/api/datasources/proxy/uid/${uid}/api/v1/label/__name__/values`
+    );
+
+    return result.data;
+  }
+
+  /**
+   * Get values for a specific label
+   * @param labelName Label name (e.g., "job", "instance")
+   * @param datasourceUid Datasource UID (optional)
+   */
+  async getLabelValues(
+    labelName: string,
+    datasourceUid?: string
+  ): Promise<string[]> {
+    const uid = datasourceUid || this.defaultDatasourceUid;
+    if (!uid) {
+      throw new Error(
+        'Datasource UID required. Set GRAFANA_DEFAULT_DATASOURCE_UID or provide datasourceUid parameter'
+      );
+    }
+
+    const result = await this.request<PrometheusLabelsResult>(
+      'GET',
+      `/api/datasources/proxy/uid/${uid}/api/v1/label/${labelName}/values`
+    );
+
+    return result.data;
+  }
+
+  /**
+   * Get series metadata
+   * @param match Series selector (e.g., 'up{instance="10.2.52.116:8123"}')
+   * @param start Start timestamp (optional)
+   * @param end End timestamp (optional)
+   * @param datasourceUid Datasource UID (optional)
+   */
+  async getSeries(
+    match: string,
+    start?: number,
+    end?: number,
+    datasourceUid?: string
+  ): Promise<PrometheusSeriesResult> {
+    const uid = datasourceUid || this.defaultDatasourceUid;
+    if (!uid) {
+      throw new Error(
+        'Datasource UID required. Set GRAFANA_DEFAULT_DATASOURCE_UID or provide datasourceUid parameter'
+      );
+    }
+
+    const params: Record<string, any> = {
+      'match[]': match,
+    };
+
+    if (start) params.start = start;
+    if (end) params.end = end;
+
+    return this.request<PrometheusSeriesResult>(
+      'GET',
+      `/api/datasources/proxy/uid/${uid}/api/v1/series`,
+      params
+    );
+  }
+
+  /**
+   * Check service status using 'up' metric
+   * @param job Job name filter (optional)
+   * @param instance Instance filter (optional)
+   * @param datasourceUid Datasource UID (optional)
+   */
+  async getServiceStatus(
+    job?: string,
+    instance?: string,
+    datasourceUid?: string
+  ): Promise<ServiceStatus[]> {
+    let query = 'up';
+    const filters: string[] = [];
+
+    if (job) filters.push(`job="${job}"`);
+    if (instance) filters.push(`instance="${instance}"`);
+
+    if (filters.length > 0) {
+      query += `{${filters.join(', ')}}`;
+    }
+
+    const result = await this.prometheusQuery(query, datasourceUid);
+
+    if (result.data.resultType !== 'vector') {
+      return [];
+    }
+
+    return (result.data.result as any[]).map((item) => ({
+      instance: item.metric.instance || 'unknown',
+      status: item.value[1] === '1' ? 'UP' : 'DOWN',
+      value: item.value[1],
+      job: item.metric.job,
+    }));
+  }
+
+  /**
+   * Extract queries from dashboard panels
+   * @param dashboardUid Dashboard UID
+   */
+  async getPanelQueries(dashboardUid: string): Promise<PanelQuery[]> {
+    const result = await this.getDashboard(dashboardUid);
+    const dashboard = result.dashboard;
+    const panels: PanelQuery[] = [];
+
+    for (const panel of dashboard.panels || []) {
+      // Skip row panels
+      if (panel.type === 'row') {
+        // Process nested panels in rows
+        if (panel.panels) {
+          for (const nestedPanel of panel.panels) {
+            panels.push(this.extractPanelQuery(nestedPanel));
+          }
+        }
+        continue;
+      }
+
+      panels.push(this.extractPanelQuery(panel));
+    }
+
+    return panels;
+  }
+
+  private extractPanelQuery(panel: any): PanelQuery {
+    const queries = (panel.targets || [])
+      .filter((t: any) => t.expr || t.query || t.rawSql)
+      .map((t: any) => ({
+        refId: t.refId,
+        expr: t.expr,
+        query: t.query,
+        rawSql: t.rawSql,
+        datasource: t.datasource,
+      }));
+
+    return {
+      panel_id: panel.id,
+      panel_title: panel.title || 'Untitled',
+      panel_type: panel.type,
+      queries,
+    };
   }
 }
 

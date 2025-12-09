@@ -1,7 +1,7 @@
 {
   "name": "grafana-observer-mcp",
-  "version": "0.2.0",
-  "description": "MCP server for observing and reading Grafana dashboards and panels",
+  "version": "0.3.0",
+  "description": "MCP server for observing Grafana dashboards, panels, and querying Prometheus metrics",
   "main": "dist/index.js",
   "types": "dist/index.d.ts",
   "bin": {

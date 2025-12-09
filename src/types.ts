@@ -140,5 +140,81 @@ export interface GrafanaConfig {
   password?: string;
   orgId?: string;
   verifySSL?: boolean;
+  defaultDatasourceUid?: string;
+}
+
+// Prometheus Query Types
+export interface PrometheusMetric {
+  [key: string]: string;
+}
+
+export interface PrometheusInstantValue {
+  metric: PrometheusMetric;
+  value: [number, string]; // [timestamp, value]
+}
+
+export interface PrometheusRangeValue {
+  metric: PrometheusMetric;
+  values: Array<[number, string]>; // [[timestamp, value], ...]
+}
+
+export interface PrometheusQueryResult {
+  status: string;
+  data: {
+    resultType: 'vector' | 'matrix' | 'scalar' | 'string';
+    result: PrometheusInstantValue[] | PrometheusRangeValue[];
+  };
+}
+
+export interface PrometheusLabelsResult {
+  status: string;
+  data: string[];
+}
+
+export interface PrometheusSeriesResult {
+  status: string;
+  data: PrometheusMetric[];
+}
+
+export interface HealthCheckResult {
+  commit: string;
+  database: string;
+  version: string;
+}
+
+export interface OrgInfo {
+  id: number;
+  name: string;
+  address?: {
+    address1?: string;
+    address2?: string;
+    city?: string;
+    zipCode?: string;
+    state?: string;
+    country?: string;
+  };
+}
+
+export interface ServiceStatus {
+  instance: string;
+  status: 'UP' | 'DOWN';
+  value: string;
+  job?: string;
+}
+
+export interface PanelQuery {
+  panel_id: number;
+  panel_title: string;
+  panel_type: string;
+  queries: Array<{
+    refId: string;
+    expr?: string;
+    query?: string;
+    rawSql?: string;
+    datasource?: {
+      type: string;
+      uid: string;
+    };
+  }>;
 }
 
