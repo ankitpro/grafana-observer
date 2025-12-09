@@ -1,0 +1,13 @@
+{
+  "mcpServers": {
+    "grafana-observer": {
+      "command": "python",
+      "args": ["/path/to/grafana-observer/src/grafana_observer/server.py"],
+      "env": {
+        "GRAFANA_URL": "https://grafana.preprod.tendplatform.com",
+        "GRAFANA_TOKEN": "your-api-token"
+      }
+    }
+  }
+}
+
