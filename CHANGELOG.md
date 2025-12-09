@@ -5,7 +5,25 @@ All notable changes to this project will be documented in this file.
 The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/),
 and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
-## [Unreleased]
+## [0.2.0] - 2024-12-09
+
+### Added
+- **Email/Password Authentication**: Added support for email and password authentication as an alternative to API tokens
+- Users can now authenticate using either:
+  - `GRAFANA_TOKEN` (API token) - Recommended
+  - `GRAFANA_EMAIL` and `GRAFANA_PASSWORD` (Basic auth)
+- Authentication method logging on server startup
+- Improved error messages for missing authentication credentials
+
+### Changed
+- Updated client to support multiple authentication methods
+- Enhanced documentation with authentication examples
+- Updated .env.example with both authentication options
+
+### Fixed
+- Better validation of authentication credentials on initialization
+
+## [0.1.0] - 2024-12-09
 
 ### Added
 - Initial release of Grafana Observer MCP
@@ -20,28 +38,5 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 - Tool: `get_datasource` - Get specific data source details
 - Comprehensive test suite
 - Documentation and examples
-
-### Changed
-- N/A
-
-### Deprecated
-- N/A
-
-### Removed
-- N/A
-
-### Fixed
-- N/A
-
-### Security
-- N/A
-
-## [0.1.0] - 2024-12-09
-
-### Added
-- Initial project setup
-- Basic MCP server implementation
-- Grafana API client
-- Pydantic models for type safety
-- Apache 2.0 license
-
+- TypeScript/Node.js implementation
+- Published to npm as `grafana-observer-mcp`

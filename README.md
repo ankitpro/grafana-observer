@@ -30,18 +30,37 @@ Set the following environment variables:
 ```bash
 # Required
 export GRAFANA_URL="https://your-grafana-instance.com"
+
+# Authentication: Choose ONE of the following methods:
+
+# Option 1: API Token (Recommended)
 export GRAFANA_TOKEN="your-api-token"
+
+# Option 2: Email/Password
+export GRAFANA_EMAIL="your-email@example.com"
+export GRAFANA_PASSWORD="your-password"
 
 # Optional
 export GRAFANA_ORG_ID="1"  # Default organization ID
 export GRAFANA_VERIFY_SSL="true"  # Set to false for self-signed certificates
 ```
 
-### Getting a Grafana API Token
+### Authentication Methods
+
+#### Option 1: API Token (Recommended)
 
 1. In Grafana, go to Configuration → API Keys (or Service Accounts for newer versions)
 2. Create a new API key with **Viewer** permissions
 3. Copy the token and set it as `GRAFANA_TOKEN`
+
+#### Option 2: Email/Password
+
+Use your Grafana login credentials:
+- Set `GRAFANA_EMAIL` to your email address
+- Set `GRAFANA_PASSWORD` to your password
+- This uses HTTP Basic Authentication
+
+**Note:** If both methods are provided, API Token will be used (preferred)
 
 ## Usage with MCP
 
